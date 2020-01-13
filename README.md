@@ -74,12 +74,17 @@ drauClient
 
 ## Aodlistbroadcasts
 
-#### setLimit()
+This method retreives all broadcasts (sender).
+
+
+The constructor has three properties:
+
+#### limit
 
 Type is integer.
 
 
-#### setStation()
+#### station
 
 You can use the contants above
 
@@ -88,16 +93,63 @@ const DRau = require('tidrau');
 const drauClient = Drau.createAodlistaudio();
 drauClient.setStation(DRau.STATION_NOVA);
 ```
- 
-In the end you can call the method `get`. The result comes back by observer pattern:
+
+#### onload
 
 ```javascript
 const DRau = require('tidrau');
-const drauClient = Drau.createAodlistbroadcasts();
-drauClient.addEventListener('load',onLoad);
-drauClient
-	.setStation(DRau.STATION_NOVA);
-	.setLimit(200),
-	.get();
+const drauClient = Drau.createAodlistbroadcasts({
+	station : DRau.STATION_NOVA,
+	onload : (e) => comsole.log(e)
+});
 ```
+
+## Aodpreviewdata
+
+This gives you the actual details about transmission
+
+
+The constructor has two properties:
+
+
+#### station
+
+You can use the contants above
+
+
+
+#### interval
+
+In ms
+
+```javascript
+const DRau = require('tidrau');
+const drauClient = Drau.createAodlistbroadcasts({
+	station : DRau.STATION_NOVA,
+});
+```
+
+### Methods
+
+#### start()
+##### interval
+##### onload
+
+```javascript
+```javascript
+const DRau = require('tidrau');
+const drauPreview = Drau.createAodpreviewdata({
+	station:  DRau.STATION_KULTUR
+});
+drauPreview.start({
+	interval : 5000,
+	onload : e => consoe.log(e)
+});
+
+```
+ 
+
+#### stop()
+
+
 
