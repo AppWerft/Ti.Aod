@@ -6,7 +6,7 @@
  * Please see the LICENSE included with this distribution for details.
  *
  */
-package ti.drau;
+package ti.aod;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
@@ -24,8 +24,8 @@ import android.app.Activity;
 
 
 // This proxy can be created by calling Drau.createExample({message: "hello world"})
-@Kroll.proxy(creatableInModule=DrauModule.class)
-public class AodlistbroadcastsProxy extends TiViewProxy
+@Kroll.proxy(creatableInModule=AodModule.class)
+public class ListaudioProxy extends KrollProxy
 {
 	// Standard Debugging variables
 	private static final String LCAT = "ExampleProxy";
@@ -34,12 +34,11 @@ public class AodlistbroadcastsProxy extends TiViewProxy
 	
 
 	// Constructor
-	public AodlistbroadcastsProxy()
+	public ListaudioProxy()
 	{
 		super();
 	}
 
-	
 	// Methods
 	@Kroll.method
 	public void printMessage(String message)

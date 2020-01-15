@@ -1,4 +1,4 @@
-# Ti.DRau
+# Ti.Oad
 
 
 Axways Titanium module for communicating with AudioServer of Deutschlandfunk Köln.
@@ -12,19 +12,19 @@ Axways Titanium module for communicating with AudioServer of Deutschlandfunk Kö
 The requesting proceeds in pages. You can set the size with:
 
 ```javascript
-const DRau = require('tidrau');
-DRau.setPagesize(100);
+const Oad = require('ti.oad');
+Oad.setPagesize(100);
 ```
 Default is 500
 
 
-## Aodlistaudio
+## Listaudio
 
 The client gets JSON data from server.
 
 ```javascript
-const DRau = require('tidrau');
-const drauClient = Drau.createAodlistaudio();
+const Oad = require('ti.oad');
+const oadClient = Oad.createListaudio();
 ```
 
 ### Builder methods of client
@@ -53,28 +53,28 @@ Type is integer.
 You can use the contants above
 
 ```javascript
-const DRau = require('tidrau');
-const drauClient = Drau.createAodlistaudio();
-drauClient.setStation(DRau.STATION_NOVA);
+const Oad = require('ti.oad');
+const OadClient = Oad.createListaudio();
+OadClient.setStation(Oad.STATION_NOVA);
 ```
  
 In the end you can call the method `get`. The result comes back by observer pattern:
 
 ```javascript
-const DRau = require('tidrau');
-const drauClient = Drau.createAodlistaudio();
-drauClient.addEventListener('load',onLoad);
-drauClient
-	.setStation(DRau.STATION_NOVA);
+const Oad = require('ti.oad');
+const OadClient = Oad.createAodlistaudio();
+OadClient.addEventListener('load',onLoad);
+OadClient
+	.setStation(Oad.STATION_NOVA);
 	.setFrom('01.01.2020'),
 	.setLimit(200),
 	.setSearchWord('klima')
 	.get();
 ```
 
-## Aodlistbroadcasts
+## Listbroadcasts
 
-This method retreives all broadcasts (sender).
+This method retreives all broadcasts (sendungen).
 
 
 The constructor has three properties:
@@ -89,22 +89,22 @@ Type is integer.
 You can use the contants above
 
 ```javascript
-const DRau = require('tidrau');
-const drauClient = Drau.createAodlistaudio();
-drauClient.setStation(DRau.STATION_NOVA);
+const Oad = require('ti.oad');
+const OadClient = Oad.createAodlistaudio();
+OadClient.setStation(Oad.STATION_NOVA);
 ```
 
 #### onload
 
 ```javascript
-const DRau = require('tidrau');
-const drauClient = Drau.createAodlistbroadcasts({
-	station : DRau.STATION_NOVA,
+const Oad = require('ti.oad');
+const OadClient = Oad.createAodlistbroadcasts({
+	station : Oad.STATION_NOVA,
 	onload : (e) => comsole.log(e)
 });
 ```
 
-## Aodpreviewdata
+## Previewdata
 
 This gives you the actual details about transmission
 
@@ -123,9 +123,9 @@ You can use the contants above
 In ms
 
 ```javascript
-const DRau = require('tidrau');
-const drauClient = Drau.createAodlistbroadcasts({
-	station : DRau.STATION_NOVA,
+const Oad = require('ti.oad');
+const OadClient = Oad.createListbroadcasts({
+	station : Oad.STATION_NOVA,
 });
 ```
 
@@ -137,19 +137,24 @@ const drauClient = Drau.createAodlistbroadcasts({
 
 ```javascript
 ```javascript
-const DRau = require('tidrau');
-const drauPreview = Drau.createAodpreviewdata({
-	station:  DRau.STATION_KULTUR
+const Oad = require('tiOad');
+const OadPreview = Oad.createPreviewdata({
+	station:  Oad.STATION_KULTUR
 });
-drauPreview.start({
+OadPreview.start({
 	interval : 5000,
-	onload : e => consoe.log(e)
+	onload : e => console.log(e)
 });
 
 ```
  
 
 #### stop()
+
+
+further endpoints:
+https://srv.deutschlandradio.de/aodradionightdata.1860.de.rpc
+
 
 
 
