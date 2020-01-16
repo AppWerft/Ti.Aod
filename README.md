@@ -3,6 +3,9 @@
 
 Axways Titanium module for communicating with AudioServer of Deutschlandfunk Köln.
 
+## startDailyScheduler()
+This method starts the fetching of daily scheduler. 
+
 
 ## Constants
 * STATION_DLF

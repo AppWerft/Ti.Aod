@@ -29,7 +29,6 @@ import org.appcelerator.titanium.view.TiUIView;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import ti.aod.PreviewdataProxy.SoupRequestHandler;
 
 
 // This proxy can be created by calling Drau.createExample({message: "hello world"})

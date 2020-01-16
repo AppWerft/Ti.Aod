@@ -9,6 +9,9 @@
 package ti.aod;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,13 +25,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 
-// This proxy can be created by calling Drau.createExample({message: "hello world"})
-@Kroll.proxy(creatableInModule = AodModule.class)
+@Kroll.proxy(creatableInModule = AodModule.class, propertyAccessors = { "onLoad"})
 public class PreviewdataProxy extends KrollProxy {
 	// Standard Debugging variables
-	private static final String LCAT = AodModule.LCAT;
-	
+	private static final String LCAT = AodModule.LCAT + "Preview";
+
 	private int station;
 	private long interval = 1000;
 	private boolean running = false;
@@ -44,34 +47,66 @@ public class PreviewdataProxy extends KrollProxy {
 		super();
 	}
 
-	private final class SoupRequestHandler extends AsyncTask<Void, Void, KrollDict> {
+	private KrollDict getCurrentbroadcast() {
+		if (AodModule.dailyScheduler.containsKey(new Integer(station))) {
+			Dailyscheduler scheduler = AodModule.dailyScheduler.get(new Integer(station));
+			if (scheduler != null) {
+				ArrayList<Broadcast> broadcastsList = scheduler.getBroadcastList();
+				for (int i = 0; i < broadcastsList.size(); i++) {
+					if (broadcastsList.get(i).isOnair())
+						return broadcastsList.get(i).toKrollDict();
+				}
+				String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+				if (scheduler.day.equals(today) == false) {
+					scheduler.refreshList();
+				}
+			}
+		}
+		return new KrollDict();
+	}
+
+	private final class PreviewdataRequestHandler extends AsyncTask<Void, Void, KrollDict> {
 		@Override
 		protected KrollDict doInBackground(Void[] arg0) {
-			KrollDict resultDict = new KrollDict();
+			// getting static data from module
+			Log.d(LCAT, "doInBackground");
+			KrollDict resultDict = getCurrentbroadcast();
+			Log.d(LCAT, resultDict.toString());
 			try {
-				Log.d(LCAT, url);
-				doc = Jsoup.connect(url).ignoreContentType(false).get();
-				resultDict.put("time_start",doc.select("time_start").get(0).text());
-				resultDict.put("name",doc.select("name").get(0).text());
-				resultDict.put("text",doc.select("text").get(0).text());
-				resultDict.put("href_text",doc.select("href_text").get(0).text());
-				resultDict.put("href",doc.select("href").get(0).text());
+				Log.d(LCAT, "Jsoup.connect " + url + station);
+				doc = Jsoup.connect(url + station).ignoreContentType(false).get();
 			} catch (IOException e) {
 				e.printStackTrace();
-				if (onError != null)
+				if (onError != null) {
+					resultDict.put("error", e.getLocalizedMessage());
 					onError.call(getKrollObject(), resultDict);
+				}
 			}
 			return resultDict;
 		}
 
 		protected void onPostExecute(KrollDict resultDict) {
-			if (onLoad != null) {
-				resultDict.put("charset", doc.charset().name());
-				resultDict.put("location", doc.location());
-				resultDict.put("length", doc.toString().length());
-				onLoad.call(getKrollObject(), resultDict);
-			} else
-				Log.w(LCAT, "onload is missing");
+
+			String text = doc.select("text").get(0).text();
+			String name = doc.select("name").get(0).text();
+			if (text.startsWith(name)) {
+				text = text.substring(name.length());
+			}
+			if (!resultDict.containsKey("title"))
+				resultDict.put("title", name);
+			if (!resultDict.containsKey("start"))
+				resultDict.put("start", doc.select("time_start").get(0).text().substring(0,5));
+			resultDict.put("name", name);
+			resultDict.put("text", text);
+			resultDict.put("href_text", doc.select("href_text").get(0).text());
+			resultDict.put("href", doc.select("href").get(0).text());
+			if (onLoad != null)
+				onLoad.callAsync(getKrollObject(), resultDict);
+			if (hasProperty("onLoad")) {
+				((KrollFunction) getProperty("onLoad")).callAsync(getKrollObject(), resultDict);
+
+			}
+
 		}
 	}
 
@@ -79,31 +114,56 @@ public class PreviewdataProxy extends KrollProxy {
 	@Override
 	public void handleCreationDict(KrollDict opts) {
 		super.handleCreationDict(opts);
-
 		if (opts.containsKey("station")) {
 			station = opts.getInt("station");
-		}
 
+		}
 	}
 
+	@Kroll.method	
+	public void setStation(int station) {
+		this.station = new Integer(station);
+		timer.cancel();
+		startTimer();
+	}
+
+	
+	
+	
 	@Kroll.method
 	public void start(KrollDict opts) {
 		if (opts.containsKey("interval")) {
 			interval = opts.getInt("interval");
 		}
+		if (opts.containsKey("onload")) {
+			onLoad = (KrollFunction) opts.get("onload");
+		}
+		startTimer();
+	}
+	private void startTimer() {
+		final Handler handler = new Handler();
 		timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
+		TimerTask doAsynchronousTask = new TimerTask() {
 			@Override
 			public void run() {
-				AsyncTask<Void, Void, KrollDict> doRequest = new SoupRequestHandler();
+				handler.post(new Runnable() {
+					public void run() {
+						try {
+							new PreviewdataRequestHandler().execute();
+						} catch (Exception e) {
+							Log.e(LCAT, e.getLocalizedMessage());
+						}
+					}
+				});
 			}
-		}, 0, interval);
-	}
+		};
+		timer.schedule(doAsynchronousTask, 0, interval); // execute in every 
 
+		Log.d(LCAT, "timer with interval " + interval + " started");
+	}
 	@Kroll.method
 	public void stop() {
 		timer.cancel();
 	}
 
-	
 }

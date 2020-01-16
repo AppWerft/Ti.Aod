@@ -8,42 +8,35 @@
  */
 package ti.aod;
 
-import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
-import org.appcelerator.titanium.TiProperties;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.DocumentType;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import android.os.AsyncTask;
+import android.os.Bundle;
 
 @Kroll.module(name = "Aod", id = "ti.aod")
-public class AodModule extends KrollModule {
-
-	public static final String LCAT = "TiAod";
+public class AodModule extends KrollModule implements AsyncResponse {
+	public static final String LCAT = "🧯TiAod";
 	@Kroll.constant
 	public static final int STATION_DLF = 3;
 	@Kroll.constant
 	public static final int STATION_KULTUR = 4;
 	@Kroll.constant
+	public static final int STATION_DRK = 4;
+	@Kroll.constant
 	public static final int STATION_NOVA = 1;
-	KrollFunction onLoad;
-	KrollFunction onError;
-	String url;
-	static HashMap<Integer,Dailyscheduler> dailyschedulers;   
-	//static Dailyscheduler dlf;
-	//static Dailyscheduler drk;
-	
-	private TiProperties appProperties;
+	@Kroll.constant
+	public static final int STATION_DRW = 1;
+
+	// static HashMap<Integer, ArrayList<Broadcast>> broadcastsDepot;
+	static HashMap<Integer, Dailyscheduler> dailyScheduler = new HashMap<Integer, Dailyscheduler>();
 
 	public AodModule() {
 		super();
@@ -51,9 +44,41 @@ public class AodModule extends KrollModule {
 
 	@Kroll.onAppCreate
 	public static void onAppCreate(TiApplication app) {
-		String EP = "\"http://www.deutschlandfunk.de/programmvorschau";
-		dlf = new Dailyscheduler(EP+".281.de.rss");
-		drk = new Dailyscheduler(EP+".282.de.rss");
+		// startDailyscheduler();
 	}
-	
+
+	@Kroll.method
+	public KrollDict getCurrentbroadcast(int stationid) {
+		Dailyscheduler scheduler = dailyScheduler.get(new Integer(stationid));
+
+		if (scheduler.day.equals(new SimpleDateFormat("yyyy-MM-dd").format(new Date())) == false) {
+			scheduler.refreshList();
+		}
+		if (scheduler != null) {
+			ArrayList<Broadcast> broadcastsList = scheduler.getBroadcastList();
+			for (int i = 0; i < broadcastsList.size(); i++) {
+				if (broadcastsList.get(i).isOnair())
+					return broadcastsList.get(i).toKrollDict();
+			}
+
+		}
+		return null;
+	}
+
+	@Kroll.method
+	public void init() {
+		String DLF = "http://www.deutschlandfunk.de/programmvorschau.281.de.rss";
+		Dailyscheduler dlfscheduler = new Dailyscheduler(new Integer(STATION_DLF), DLF);
+		dlfscheduler.delegate = this;
+
+		String DRK = "http://www.deutschlandradiokultur.de/programmvorschau.282.de.rss";
+		Dailyscheduler drkscheduler = new Dailyscheduler(new Integer(STATION_DRK), DRK);
+		drkscheduler.delegate = this;
+	}
+
+	@Override
+	public void processScheduler(int station, Dailyscheduler scheduler) {
+		Log.d(LCAT, "processScheduler" + station);
+		dailyScheduler.put(new Integer(station), scheduler);
+	}
 }
