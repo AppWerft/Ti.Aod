@@ -1,4 +1,4 @@
-# Ti.Oad
+# Ti.Aod
 
 
 Axways Titanium module for communicating with AudioServer of Deutschlandfunk Köln.
@@ -9,13 +9,13 @@ This method starts the fetching of daily scheduler.
 
 ## Constants
 * STATION_DLF
-* STATION_KULTUR
+* STATION_DRK
 * STATION_NOVA
 
 The requesting proceeds in pages. You can set the size with:
 
 ```javascript
-const Oad = require('ti.oad');
+const Aod= require('ti.aod');
 Oad.setPagesize(100);
 ```
 Default is 500
@@ -26,8 +26,8 @@ Default is 500
 The client gets JSON data from server.
 
 ```javascript
-const Oad = require('ti.oad');
-const oadClient = Oad.createListaudio();
+const Aod= require('ti.aod');
+const aodClient = Aod.createListaudio();
 ```
 
 ### Builder methods of client
@@ -56,7 +56,7 @@ Type is integer.
 You can use the contants above
 
 ```javascript
-const Oad = require('ti.oad');
+const Aod= require('ti.aod');
 const OadClient = Oad.createListaudio();
 OadClient.setStation(Oad.STATION_NOVA);
 ```
@@ -64,8 +64,8 @@ OadClient.setStation(Oad.STATION_NOVA);
 In the end you can call the method `get`. The result comes back by observer pattern:
 
 ```javascript
-const Oad = require('ti.oad');
-const OadClient = Oad.createAodlistaudio();
+const Aod= require('ti.aod');
+const AodClient = Aod.createAodlistaudio();
 OadClient.addEventListener('load',onLoad);
 OadClient
 	.setStation(Oad.STATION_NOVA);
@@ -89,25 +89,25 @@ Type is integer.
 
 #### station
 
-You can use the contants above
+You can use the constants above
 
 ```javascript
-const Oad = require('ti.oad');
-const OadClient = Oad.createAodlistaudio();
-OadClient.setStation(Oad.STATION_NOVA);
+const Aod= require('ti.aod');
+const AodList = Aod.createListaudio();
+AoList.setStation(Oad.STATION_NOVA);
 ```
 
 #### onload
 
 ```javascript
-const Oad = require('ti.oad');
-const OadClient = Oad.createAodlistbroadcasts({
-	station : Oad.STATION_NOVA,
-	onload : (e) => comsole.log(e)
+const Aod= require('ti.aod');
+const AodLis = Aod.createListbroadcasts({
+	station : Aod.STATION_NOVA,
+	onlAod: (e) => console.log(e)
 });
 ```
 
-## Previewdata
+## Livedata
 
 This gives you the actual details about transmission
 
@@ -125,12 +125,6 @@ You can use the contants above
 
 In ms
 
-```javascript
-const Oad = require('ti.oad');
-const OadClient = Oad.createListbroadcasts({
-	station : Oad.STATION_NOVA,
-});
-```
 
 ### Methods
 
@@ -140,13 +134,13 @@ const OadClient = Oad.createListbroadcasts({
 
 ```javascript
 ```javascript
-const Oad = require('tiOad');
-const OadPreview = Oad.createPreviewdata({
+const Aod= require('tiOad');
+const OadPreview = Oad.createLivedata({
 	station:  Oad.STATION_KULTUR
 });
 OadPreview.start({
 	interval : 5000,
-	onload : e => console.log(e)
+	onload: e => console.log(e)
 });
 
 ```
@@ -155,7 +149,7 @@ OadPreview.start({
 #### stop()
 
 
-further endpoints:
+other endpoints:
 https://srv.deutschlandradio.de/aodradionightdata.1860.de.rpc
 
 

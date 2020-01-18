@@ -28,7 +28,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 
 @Kroll.proxy(creatableInModule = AodModule.class, propertyAccessors = { "onLoad"})
-public class PreviewdataProxy extends KrollProxy {
+public class LivedataProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = AodModule.LCAT + "Preview";
 
@@ -43,7 +43,7 @@ public class PreviewdataProxy extends KrollProxy {
 	private String url = "http://srv.deutschlandradio.de/aodpreviewdata.1915.de.rpc?drbm:station_id=";
 
 	// Constructor
-	public PreviewdataProxy() {
+	public LivedataProxy() {
 		super();
 	}
 

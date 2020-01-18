@@ -13,7 +13,11 @@ import org.jsoup.nodes.Element;
 import android.os.AsyncTask;
 
 public final class ListAudioRequestHandler extends AsyncTask<String, Void, Document> {
-	public AsyncResponse delegate = null;
+	public AsyncResponse delegate;
+	
+	public interface AsyncResponse {
+		void process(int page,ArrayList<Article> articleList);
+	}
 	
 	@Override
 	protected Document doInBackground(String[] urls) {
@@ -33,7 +37,7 @@ public final class ListAudioRequestHandler extends AsyncTask<String, Void, Docum
 		
 		ArrayList<KrollDict> listOfItems = new ArrayList<KrollDict>();
 		if (doc != null) {
-			
+			int page =0;
 			for (Element elem : doc.select("broadcastings > item")) {
 				
 				KrollDict item = new KrollDict();
@@ -44,6 +48,7 @@ public final class ListAudioRequestHandler extends AsyncTask<String, Void, Docum
 			KrollDict res = new KrollDict();
 			res.put("broadcastings", listOfItems.toArray());
 			delegate.processScheduler(page, this);
+			
 		} 
 	}
 }
