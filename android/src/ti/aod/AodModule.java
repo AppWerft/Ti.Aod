@@ -19,7 +19,9 @@ import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 
-import android.os.Bundle;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 @Kroll.module(name = "Aod", id = "ti.aod")
 public class AodModule extends KrollModule implements AsyncResponse {
@@ -80,5 +82,17 @@ public class AodModule extends KrollModule implements AsyncResponse {
 	public void processScheduler(int station, Dailyscheduler scheduler) {
 		Log.d(LCAT, "processScheduler" + station);
 		dailyScheduler.put(new Integer(station), scheduler);
+	}
+	
+	static boolean isNetworkAvailable() {
+	    ConnectivityManager manager =
+	            (ConnectivityManager) TiApplication.getAppRootOrCurrentActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+	    boolean isAvailable = false;
+	    if (networkInfo != null && networkInfo.isConnected()) {
+	        // Network is present and connected
+	        isAvailable = true;
+	    }
+	    return isAvailable;
 	}
 }

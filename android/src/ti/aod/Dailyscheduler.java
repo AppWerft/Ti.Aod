@@ -40,14 +40,14 @@ public class Dailyscheduler {
 	}
 	
 	public boolean refreshList() {
-		if (this.broadcastList != null && !this.broadcastList.isEmpty()) {
+		/*if (this.broadcastList != null && !this.broadcastList.isEmpty()) {
 			if (false == isToday(this.broadcastList.get(0).getDay())) {
 				Log.d(LCAT, "old broadcastList need to refresh");
 				new SoupRequester().execute(this.endpoint);
 				return false;
 			} else
 				return true;
-		}
+		}*/
 		new SoupRequester().execute(this.endpoint);
 		return false;
 	}

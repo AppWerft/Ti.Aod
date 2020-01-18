@@ -100,6 +100,13 @@ Local<FunctionTemplate> ListbroadcastsProxy::getProxyTemplate(v8::Isolate* isola
 	// Dynamic properties -----------------------------------------------------
 
 	// Accessors --------------------------------------------------------------
+	Local<String> onLoad = NEW_SYMBOL(isolate, "onLoad");
+	instanceTemplate->SetAccessor(
+		onLoad,
+		titanium::Proxy::getProperty,
+		titanium::Proxy::onPropertyChanged);
+	DEFINE_PROTOTYPE_METHOD_DATA(isolate, t, "getOnLoad", titanium::Proxy::getProperty, onLoad);
+	DEFINE_PROTOTYPE_METHOD_DATA(isolate, t, "setOnLoad", titanium::Proxy::onPropertyChanged, onLoad);
 
 	return scope.Escape(t);
 }

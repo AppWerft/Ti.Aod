@@ -149,8 +149,10 @@ public class PreviewdataProxy extends KrollProxy {
 				handler.post(new Runnable() {
 					public void run() {
 						try {
+							if (AodModule.isNetworkAvailable()) {
 							new PreviewdataRequestHandler().execute();
-						} catch (Exception e) {
+							}
+							} catch (Exception e) {
 							Log.e(LCAT, e.getLocalizedMessage());
 						}
 					}
