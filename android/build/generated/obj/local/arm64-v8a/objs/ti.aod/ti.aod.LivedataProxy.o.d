@@ -1,5 +1,5 @@
-/Users/fuerst/Documents/TitaniumStudioWorkspace/Ti.Aod/android/build/generated/obj/local/arm64-v8a/objs/ti.aod/ti.aod.PreviewdataProxy.o: \
- jni/ti.aod.PreviewdataProxy.cpp jni/ti.aod.PreviewdataProxy.h \
+/Users/fuerst/Documents/TitaniumStudioWorkspace/Ti.Aod/android/build/generated/obj/local/arm64-v8a/objs/ti.aod/ti.aod.LivedataProxy.o: \
+ jni/ti.aod.LivedataProxy.cpp jni/ti.aod.LivedataProxy.h \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/Proxy.h \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/v8.h \
  /Users/fuerst/Library/Android/ndk/sources/cxx-stl/llvm-libc++/../../android/support/include/stdint.h \
@@ -51,7 +51,7 @@
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/org.appcelerator.kroll.KrollProxy.h \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/Proxy.h
 
-jni/ti.aod.PreviewdataProxy.h:
+jni/ti.aod.LivedataProxy.h:
 
 /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/Proxy.h:
 

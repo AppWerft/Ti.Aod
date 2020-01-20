@@ -7,7 +7,7 @@
 
 /** This code is generated, do not edit by hand. **/
 
-#include "ti.aod.PreviewdataProxy.h"
+#include "ti.aod.LivedataProxy.h"
 
 #include "AndroidUtil.h"
 #include "JNIUtil.h"
@@ -18,7 +18,7 @@
 
 #include "org.appcelerator.kroll.KrollProxy.h"
 
-#define TAG "PreviewdataProxy"
+#define TAG "LivedataProxy"
 
 using namespace v8;
 
@@ -27,14 +27,14 @@ namespace aod {
 	namespace aod {
 
 
-Persistent<FunctionTemplate> PreviewdataProxy::proxyTemplate;
-jclass PreviewdataProxy::javaClass = NULL;
+Persistent<FunctionTemplate> LivedataProxy::proxyTemplate;
+jclass LivedataProxy::javaClass = NULL;
 
-PreviewdataProxy::PreviewdataProxy() : titanium::Proxy()
+LivedataProxy::LivedataProxy() : titanium::Proxy()
 {
 }
 
-void PreviewdataProxy::bindProxy(Local<Object> exports, Local<Context> context)
+void LivedataProxy::bindProxy(Local<Object> exports, Local<Context> context)
 {
 	Isolate* isolate = context->GetIsolate();
 
@@ -48,11 +48,11 @@ void PreviewdataProxy::bindProxy(Local<Object> exports, Local<Context> context)
 		return;
 	}
 
-	Local<String> nameSymbol = NEW_SYMBOL(isolate, "Previewdata"); // use symbol over string for efficiency
+	Local<String> nameSymbol = NEW_SYMBOL(isolate, "Livedata"); // use symbol over string for efficiency
 	exports->Set(context, nameSymbol, constructor);
 }
 
-void PreviewdataProxy::dispose(Isolate* isolate)
+void LivedataProxy::dispose(Isolate* isolate)
 {
 	LOGD(TAG, "dispose()");
 	if (!proxyTemplate.IsEmpty()) {
@@ -62,20 +62,20 @@ void PreviewdataProxy::dispose(Isolate* isolate)
 	titanium::KrollProxy::dispose(isolate);
 }
 
-Local<FunctionTemplate> PreviewdataProxy::getProxyTemplate(v8::Isolate* isolate)
+Local<FunctionTemplate> LivedataProxy::getProxyTemplate(v8::Isolate* isolate)
 {
 	Local<Context> context = isolate->GetCurrentContext();
 	if (!proxyTemplate.IsEmpty()) {
 		return proxyTemplate.Get(isolate);
 	}
 
-	LOGD(TAG, "PreviewdataProxy::getProxyTemplate()");
+	LOGD(TAG, "LivedataProxy::getProxyTemplate()");
 
-	javaClass = titanium::JNIUtil::findClass("ti/aod/PreviewdataProxy");
+	javaClass = titanium::JNIUtil::findClass("ti/aod/LivedataProxy");
 	EscapableHandleScope scope(isolate);
 
 	// use symbol over string for efficiency
-	Local<String> nameSymbol = NEW_SYMBOL(isolate, "Previewdata");
+	Local<String> nameSymbol = NEW_SYMBOL(isolate, "Livedata");
 
 	Local<FunctionTemplate> t = titanium::Proxy::inheritProxyTemplate(
 		isolate,
@@ -84,12 +84,12 @@ Local<FunctionTemplate> PreviewdataProxy::getProxyTemplate(v8::Isolate* isolate)
 		nameSymbol);
 
 	proxyTemplate.Reset(isolate, t);
-	t->Set(titanium::Proxy::inheritSymbol.Get(isolate), FunctionTemplate::New(isolate, titanium::Proxy::inherit<PreviewdataProxy>));
+	t->Set(titanium::Proxy::inheritSymbol.Get(isolate), FunctionTemplate::New(isolate, titanium::Proxy::inherit<LivedataProxy>));
 
 	// Method bindings --------------------------------------------------------
-	titanium::SetProtoMethod(isolate, t, "setStation", PreviewdataProxy::setStation);
-	titanium::SetProtoMethod(isolate, t, "start", PreviewdataProxy::start);
-	titanium::SetProtoMethod(isolate, t, "stop", PreviewdataProxy::stop);
+	titanium::SetProtoMethod(isolate, t, "setStation", LivedataProxy::setStation);
+	titanium::SetProtoMethod(isolate, t, "start", LivedataProxy::start);
+	titanium::SetProtoMethod(isolate, t, "stop", LivedataProxy::stop);
 
 	Local<ObjectTemplate> prototypeTemplate = t->PrototypeTemplate();
 	Local<ObjectTemplate> instanceTemplate = t->InstanceTemplate();
@@ -114,13 +114,13 @@ Local<FunctionTemplate> PreviewdataProxy::getProxyTemplate(v8::Isolate* isolate)
 	return scope.Escape(t);
 }
 
-Local<FunctionTemplate> PreviewdataProxy::getProxyTemplate(v8::Local<v8::Context> context)
+Local<FunctionTemplate> LivedataProxy::getProxyTemplate(v8::Local<v8::Context> context)
 {
 	return getProxyTemplate(context->GetIsolate());
 }
 
 // Methods --------------------------------------------------------------------
-void PreviewdataProxy::setStation(const FunctionCallbackInfo<Value>& args)
+void LivedataProxy::setStation(const FunctionCallbackInfo<Value>& args)
 {
 	LOGD(TAG, "setStation()");
 	Isolate* isolate = args.GetIsolate();
@@ -134,7 +134,7 @@ void PreviewdataProxy::setStation(const FunctionCallbackInfo<Value>& args)
 	}
 	static jmethodID methodID = NULL;
 	if (!methodID) {
-		methodID = env->GetMethodID(PreviewdataProxy::javaClass, "setStation", "(I)V");
+		methodID = env->GetMethodID(LivedataProxy::javaClass, "setStation", "(I)V");
 		if (!methodID) {
 			const char *error = "Couldn't find proxy method 'setStation' with signature '(I)V'";
 			LOGE(TAG, error);
@@ -216,7 +216,7 @@ void PreviewdataProxy::setStation(const FunctionCallbackInfo<Value>& args)
 	args.GetReturnValue().Set(v8::Undefined(isolate));
 
 }
-void PreviewdataProxy::start(const FunctionCallbackInfo<Value>& args)
+void LivedataProxy::start(const FunctionCallbackInfo<Value>& args)
 {
 	LOGD(TAG, "start()");
 	Isolate* isolate = args.GetIsolate();
@@ -230,7 +230,7 @@ void PreviewdataProxy::start(const FunctionCallbackInfo<Value>& args)
 	}
 	static jmethodID methodID = NULL;
 	if (!methodID) {
-		methodID = env->GetMethodID(PreviewdataProxy::javaClass, "start", "(Lorg/appcelerator/kroll/KrollDict;)V");
+		methodID = env->GetMethodID(LivedataProxy::javaClass, "start", "(Lorg/appcelerator/kroll/KrollDict;)V");
 		if (!methodID) {
 			const char *error = "Couldn't find proxy method 'start' with signature '(Lorg/appcelerator/kroll/KrollDict;)V'";
 			LOGE(TAG, error);
@@ -305,7 +305,7 @@ void PreviewdataProxy::start(const FunctionCallbackInfo<Value>& args)
 	args.GetReturnValue().Set(v8::Undefined(isolate));
 
 }
-void PreviewdataProxy::stop(const FunctionCallbackInfo<Value>& args)
+void LivedataProxy::stop(const FunctionCallbackInfo<Value>& args)
 {
 	LOGD(TAG, "stop()");
 	Isolate* isolate = args.GetIsolate();
@@ -319,7 +319,7 @@ void PreviewdataProxy::stop(const FunctionCallbackInfo<Value>& args)
 	}
 	static jmethodID methodID = NULL;
 	if (!methodID) {
-		methodID = env->GetMethodID(PreviewdataProxy::javaClass, "stop", "()V");
+		methodID = env->GetMethodID(LivedataProxy::javaClass, "stop", "()V");
 		if (!methodID) {
 			const char *error = "Couldn't find proxy method 'stop' with signature '()V'";
 			LOGE(TAG, error);

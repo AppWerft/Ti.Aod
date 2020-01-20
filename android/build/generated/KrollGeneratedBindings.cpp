@@ -10,9 +10,9 @@
 #include <KrollBindings.h>
 
 #include "ti.aod.ListbroadcastsProxy.h"
+#include "ti.aod.LivedataProxy.h"
 #include "ti.aod.AodModule.h"
 #include "ti.aod.ListaudioProxy.h"
-#include "ti.aod.PreviewdataProxy.h"
 
 
 namespace titanium {
@@ -47,9 +47,9 @@ namespace titanium {
 
 		BindEntry* AodBindings::lookupGeneratedInit(const char* name, unsigned int length) {
 			static BindEntry binds[] = {
-				{"ti.aod.PreviewdataProxy", ::ti::aod::aod::PreviewdataProxy::bindProxy, ::ti::aod::aod::PreviewdataProxy::dispose},
 				{"ti.aod.ListaudioProxy", ::ti::aod::aod::ListaudioProxy::bindProxy, ::ti::aod::aod::ListaudioProxy::dispose},
 				{"ti.aod.AodModule", ::ti::aod::AodModule::bindProxy, ::ti::aod::AodModule::dispose},
+				{"ti.aod.LivedataProxy", ::ti::aod::aod::LivedataProxy::bindProxy, ::ti::aod::aod::LivedataProxy::dispose},
 				{"ti.aod.ListbroadcastsProxy", ::ti::aod::aod::ListbroadcastsProxy::bindProxy, ::ti::aod::aod::ListbroadcastsProxy::dispose}
 			};
 			static std::unordered_map<const char*, BindEntry&, Hash, Compare> map = {

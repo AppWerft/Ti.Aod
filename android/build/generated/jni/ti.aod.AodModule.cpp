@@ -19,7 +19,7 @@
 
 #include "ti.aod.ListaudioProxy.h"
 #include "ti.aod.ListbroadcastsProxy.h"
-#include "ti.aod.PreviewdataProxy.h"
+#include "ti.aod.LivedataProxy.h"
 
 #include "org.appcelerator.kroll.KrollModule.h"
 

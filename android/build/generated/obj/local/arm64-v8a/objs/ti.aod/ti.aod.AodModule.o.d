@@ -49,7 +49,7 @@
  /Users/fuerst/Library/Android/ndk/sources/cxx-stl/llvm-libc++/libcxx/include/functional \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/V8Util.h \
  jni/ti.aod.ListaudioProxy.h jni/ti.aod.ListbroadcastsProxy.h \
- jni/ti.aod.PreviewdataProxy.h \
+ jni/ti.aod.LivedataProxy.h \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/org.appcelerator.kroll.KrollModule.h \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/Proxy.h
 
@@ -155,7 +155,7 @@ jni/ti.aod.ListaudioProxy.h:
 
 jni/ti.aod.ListbroadcastsProxy.h:
 
-jni/ti.aod.PreviewdataProxy.h:
+jni/ti.aod.LivedataProxy.h:
 
 /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/org.appcelerator.kroll.KrollModule.h:
 

@@ -95,4 +95,10 @@ public class AodModule extends KrollModule implements AsyncResponse {
 	    }
 	    return isAvailable;
 	}
+
+	@Override
+	public void processFinish(int id, ArrayList<Broadcast> broadcastsList) {
+		// TODO Auto-generated method stub
+		
+	}
 }

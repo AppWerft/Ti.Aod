@@ -31,13 +31,11 @@ private:
 	static v8::Persistent<v8::FunctionTemplate> proxyTemplate;
 
 	// Methods -----------------------------------------------------------
-	static void printMessage(const v8::FunctionCallbackInfo<v8::Value>&);
-	static void getMessage(const v8::FunctionCallbackInfo<v8::Value>&);
-	static void setMessage(const v8::FunctionCallbackInfo<v8::Value>&);
+	static void setTo(const v8::FunctionCallbackInfo<v8::Value>&);
+	static void setSearchItem(const v8::FunctionCallbackInfo<v8::Value>&);
+	static void setFrom(const v8::FunctionCallbackInfo<v8::Value>&);
 
 	// Dynamic property accessors ----------------------------------------
-	static void getter_message(v8::Local<v8::Name> name, const v8::PropertyCallbackInfo<v8::Value>& info);
-	static void setter_message(v8::Local<v8::Name> name, v8::Local<v8::Value> value, const v8::PropertyCallbackInfo<void>& info);
 
 };
 

@@ -35,19 +35,17 @@ public final class ListAudioRequestHandler extends AsyncTask<String, Void, Docum
 	protected void onPostExecute(Document doc) {
 		super.onPostExecute(doc);
 		
-		ArrayList<KrollDict> listOfItems = new ArrayList<KrollDict>();
+		ArrayList<Article> listOfItems = new ArrayList<Article>();
 		if (doc != null) {
 			int page =0;
 			for (Element elem : doc.select("broadcastings > item")) {
 				
-				KrollDict item = new KrollDict();
-				item.put("title", elem.text());
-				item.put("id", elem.attr("id"));
-				listOfItems.add(item);
+				Article article = new Article();
+				listOfItems.add(article);
 			}
 			KrollDict res = new KrollDict();
 			res.put("broadcastings", listOfItems.toArray());
-			delegate.processScheduler(page, this);
+			delegate.process(page, listOfItems);
 			
 		} 
 	}

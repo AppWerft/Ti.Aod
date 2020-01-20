@@ -87,9 +87,9 @@ Local<FunctionTemplate> ListaudioProxy::getProxyTemplate(v8::Isolate* isolate)
 	t->Set(titanium::Proxy::inheritSymbol.Get(isolate), FunctionTemplate::New(isolate, titanium::Proxy::inherit<ListaudioProxy>));
 
 	// Method bindings --------------------------------------------------------
-	titanium::SetProtoMethod(isolate, t, "printMessage", ListaudioProxy::printMessage);
-	titanium::SetProtoMethod(isolate, t, "getMessage", ListaudioProxy::getMessage);
-	titanium::SetProtoMethod(isolate, t, "setMessage", ListaudioProxy::setMessage);
+	titanium::SetProtoMethod(isolate, t, "setTo", ListaudioProxy::setTo);
+	titanium::SetProtoMethod(isolate, t, "setSearchItem", ListaudioProxy::setSearchItem);
+	titanium::SetProtoMethod(isolate, t, "setFrom", ListaudioProxy::setFrom);
 
 	Local<ObjectTemplate> prototypeTemplate = t->PrototypeTemplate();
 	Local<ObjectTemplate> instanceTemplate = t->InstanceTemplate();
@@ -101,14 +101,6 @@ Local<FunctionTemplate> ListaudioProxy::getProxyTemplate(v8::Isolate* isolate)
 	// Constants --------------------------------------------------------------
 
 	// Dynamic properties -----------------------------------------------------
-	instanceTemplate->SetAccessor(
-		NEW_SYMBOL(isolate, "message"),
-		ListaudioProxy::getter_message,
-		ListaudioProxy::setter_message,
-		Local<Value>(),
-		DEFAULT,
-		static_cast<v8::PropertyAttribute>(v8::DontDelete)
-	);
 
 	// Accessors --------------------------------------------------------------
 
@@ -121,9 +113,9 @@ Local<FunctionTemplate> ListaudioProxy::getProxyTemplate(v8::Local<v8::Context> 
 }
 
 // Methods --------------------------------------------------------------------
-void ListaudioProxy::printMessage(const FunctionCallbackInfo<Value>& args)
+void ListaudioProxy::setTo(const FunctionCallbackInfo<Value>& args)
 {
-	LOGD(TAG, "printMessage()");
+	LOGD(TAG, "setTo()");
 	Isolate* isolate = args.GetIsolate();
 	Local<Context> context = isolate->GetCurrentContext();
 	HandleScope scope(isolate);
@@ -135,9 +127,9 @@ void ListaudioProxy::printMessage(const FunctionCallbackInfo<Value>& args)
 	}
 	static jmethodID methodID = NULL;
 	if (!methodID) {
-		methodID = env->GetMethodID(ListaudioProxy::javaClass, "printMessage", "(Ljava/lang/String;)V");
+		methodID = env->GetMethodID(ListaudioProxy::javaClass, "setTo", "(Ljava/lang/String;)Lti/aod/ListaudioProxy;");
 		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'printMessage' with signature '(Ljava/lang/String;)V'";
+			const char *error = "Couldn't find proxy method 'setTo' with signature '(Ljava/lang/String;)Lti/aod/ListaudioProxy;'";
 			LOGE(TAG, error);
 				titanium::JSException::Error(isolate, error);
 				return;
@@ -161,7 +153,7 @@ void ListaudioProxy::printMessage(const FunctionCallbackInfo<Value>& args)
 
 	if (args.Length() < 1) {
 		char errorStringBuffer[100];
-		sprintf(errorStringBuffer, "printMessage: Invalid number of arguments. Expected 1 but got %d", args.Length());
+		sprintf(errorStringBuffer, "setTo: Invalid number of arguments. Expected 1 but got %d", args.Length());
 		titanium::JSException::Error(isolate, errorStringBuffer);
 		return;
 	}
@@ -188,79 +180,15 @@ void ListaudioProxy::printMessage(const FunctionCallbackInfo<Value>& args)
 		args.GetReturnValue().Set(v8::Undefined(isolate));
 		return;
 	}
-	env->CallVoidMethodA(javaProxy, methodID, jArguments);
+	jobject jResult = (jobject)env->CallObjectMethodA(javaProxy, methodID, jArguments);
+
+
 
 	proxy->unreferenceJavaObject(javaProxy);
 
 
 
 				env->DeleteLocalRef(jArguments[0].l);
-
-
-	if (env->ExceptionCheck()) {
-		titanium::JSException::fromJavaException(isolate);
-		env->ExceptionClear();
-	}
-
-
-
-
-	args.GetReturnValue().Set(v8::Undefined(isolate));
-
-}
-void ListaudioProxy::getMessage(const FunctionCallbackInfo<Value>& args)
-{
-	LOGD(TAG, "getMessage()");
-	Isolate* isolate = args.GetIsolate();
-	Local<Context> context = isolate->GetCurrentContext();
-	HandleScope scope(isolate);
-
-	JNIEnv *env = titanium::JNIScope::getEnv();
-	if (!env) {
-		titanium::JSException::GetJNIEnvironmentError(isolate);
-		return;
-	}
-	static jmethodID methodID = NULL;
-	if (!methodID) {
-		methodID = env->GetMethodID(ListaudioProxy::javaClass, "getMessage", "()Ljava/lang/String;");
-		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'getMessage' with signature '()Ljava/lang/String;'";
-			LOGE(TAG, error);
-				titanium::JSException::Error(isolate, error);
-				return;
-		}
-	}
-
-	Local<Object> holder = args.Holder();
-	if (!JavaObject::isJavaObject(holder)) {
-		holder = holder->FindInstanceInPrototypeChain(getProxyTemplate(isolate));
-	}
-	if (holder.IsEmpty() || holder->IsNull()) {
-		LOGE(TAG, "Couldn't obtain argument holder");
-		args.GetReturnValue().Set(v8::Undefined(isolate));
-		return;
-	}
-	titanium::Proxy* proxy = NativeObject::Unwrap<titanium::Proxy>(holder);
-	if (!proxy) {
-		args.GetReturnValue().Set(Undefined(isolate));
-		return;
-	}
-
-	jvalue* jArguments = 0;
-
-	LOGW(TAG, "Automatic getter methods for properties are deprecated in SDK 8.0.0 and will be removed in SDK 9.0.0. Please access the property in standard JS style: obj.message; or obj['message'];");
-
-	jobject javaProxy = proxy->getJavaObject();
-	if (javaProxy == NULL) {
-		args.GetReturnValue().Set(v8::Undefined(isolate));
-		return;
-	}
-	jstring jResult = (jstring)env->CallObjectMethodA(javaProxy, methodID, jArguments);
-
-
-
-	proxy->unreferenceJavaObject(javaProxy);
-
 
 
 	if (env->ExceptionCheck()) {
@@ -274,7 +202,7 @@ void ListaudioProxy::getMessage(const FunctionCallbackInfo<Value>& args)
 		return;
 	}
 
-	Local<Value> v8Result = titanium::TypeConverter::javaStringToJsString(isolate, env, jResult);
+	Local<Value> v8Result = titanium::TypeConverter::javaObjectToJsValue(isolate, env, jResult);
 
 	env->DeleteLocalRef(jResult);
 
@@ -282,9 +210,9 @@ void ListaudioProxy::getMessage(const FunctionCallbackInfo<Value>& args)
 	args.GetReturnValue().Set(v8Result);
 
 }
-void ListaudioProxy::setMessage(const FunctionCallbackInfo<Value>& args)
+void ListaudioProxy::setSearchItem(const FunctionCallbackInfo<Value>& args)
 {
-	LOGD(TAG, "setMessage()");
+	LOGD(TAG, "setSearchItem()");
 	Isolate* isolate = args.GetIsolate();
 	Local<Context> context = isolate->GetCurrentContext();
 	HandleScope scope(isolate);
@@ -296,9 +224,9 @@ void ListaudioProxy::setMessage(const FunctionCallbackInfo<Value>& args)
 	}
 	static jmethodID methodID = NULL;
 	if (!methodID) {
-		methodID = env->GetMethodID(ListaudioProxy::javaClass, "setMessage", "(Ljava/lang/String;)V");
+		methodID = env->GetMethodID(ListaudioProxy::javaClass, "setSearchItem", "(Ljava/lang/String;)Lti/aod/ListaudioProxy;");
 		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'setMessage' with signature '(Ljava/lang/String;)V'";
+			const char *error = "Couldn't find proxy method 'setSearchItem' with signature '(Ljava/lang/String;)Lti/aod/ListaudioProxy;'";
 			LOGE(TAG, error);
 				titanium::JSException::Error(isolate, error);
 				return;
@@ -322,7 +250,7 @@ void ListaudioProxy::setMessage(const FunctionCallbackInfo<Value>& args)
 
 	if (args.Length() < 1) {
 		char errorStringBuffer[100];
-		sprintf(errorStringBuffer, "setMessage: Invalid number of arguments. Expected 1 but got %d", args.Length());
+		sprintf(errorStringBuffer, "setSearchItem: Invalid number of arguments. Expected 1 but got %d", args.Length());
 		titanium::JSException::Error(isolate, errorStringBuffer);
 		return;
 	}
@@ -343,14 +271,15 @@ void ListaudioProxy::setMessage(const FunctionCallbackInfo<Value>& args)
 		jArguments[0].l = NULL;
 	}
 
-	LOGW(TAG, "Automatic setter methods for properties are deprecated in SDK 8.0.0 and will be removed in SDK 9.0.0. Please modify the property in standard JS style: obj.message = value; or obj['message'] = value;");
 
 	jobject javaProxy = proxy->getJavaObject();
 	if (javaProxy == NULL) {
 		args.GetReturnValue().Set(v8::Undefined(isolate));
 		return;
 	}
-	env->CallVoidMethodA(javaProxy, methodID, jArguments);
+	jobject jResult = (jobject)env->CallObjectMethodA(javaProxy, methodID, jArguments);
+
+
 
 	proxy->unreferenceJavaObject(javaProxy);
 
@@ -360,164 +289,123 @@ void ListaudioProxy::setMessage(const FunctionCallbackInfo<Value>& args)
 
 
 	if (env->ExceptionCheck()) {
-		titanium::JSException::fromJavaException(isolate);
+		Local<Value> jsException = titanium::JSException::fromJavaException(isolate);
 		env->ExceptionClear();
+		return;
+	}
+
+	if (jResult == NULL) {
+		args.GetReturnValue().Set(Null(isolate));
+		return;
+	}
+
+	Local<Value> v8Result = titanium::TypeConverter::javaObjectToJsValue(isolate, env, jResult);
+
+	env->DeleteLocalRef(jResult);
+
+
+	args.GetReturnValue().Set(v8Result);
+
+}
+void ListaudioProxy::setFrom(const FunctionCallbackInfo<Value>& args)
+{
+	LOGD(TAG, "setFrom()");
+	Isolate* isolate = args.GetIsolate();
+	Local<Context> context = isolate->GetCurrentContext();
+	HandleScope scope(isolate);
+
+	JNIEnv *env = titanium::JNIScope::getEnv();
+	if (!env) {
+		titanium::JSException::GetJNIEnvironmentError(isolate);
+		return;
+	}
+	static jmethodID methodID = NULL;
+	if (!methodID) {
+		methodID = env->GetMethodID(ListaudioProxy::javaClass, "setFrom", "(Ljava/lang/String;)Lti/aod/ListaudioProxy;");
+		if (!methodID) {
+			const char *error = "Couldn't find proxy method 'setFrom' with signature '(Ljava/lang/String;)Lti/aod/ListaudioProxy;'";
+			LOGE(TAG, error);
+				titanium::JSException::Error(isolate, error);
+				return;
+		}
+	}
+
+	Local<Object> holder = args.Holder();
+	if (!JavaObject::isJavaObject(holder)) {
+		holder = holder->FindInstanceInPrototypeChain(getProxyTemplate(isolate));
+	}
+	if (holder.IsEmpty() || holder->IsNull()) {
+		LOGE(TAG, "Couldn't obtain argument holder");
+		args.GetReturnValue().Set(v8::Undefined(isolate));
+		return;
+	}
+	titanium::Proxy* proxy = NativeObject::Unwrap<titanium::Proxy>(holder);
+	if (!proxy) {
+		args.GetReturnValue().Set(Undefined(isolate));
+		return;
+	}
+
+	if (args.Length() < 1) {
+		char errorStringBuffer[100];
+		sprintf(errorStringBuffer, "setFrom: Invalid number of arguments. Expected 1 but got %d", args.Length());
+		titanium::JSException::Error(isolate, errorStringBuffer);
+		return;
+	}
+
+	jvalue jArguments[1];
+
+
+
+
+	
+	if (!args[0]->IsNull()) {
+		Local<Value> arg_0 = args[0];
+		jArguments[0].l =
+			titanium::TypeConverter::jsValueToJavaString(
+				isolate,
+				env, arg_0);
+	} else {
+		jArguments[0].l = NULL;
 	}
 
 
+	jobject javaProxy = proxy->getJavaObject();
+	if (javaProxy == NULL) {
+		args.GetReturnValue().Set(v8::Undefined(isolate));
+		return;
+	}
+	jobject jResult = (jobject)env->CallObjectMethodA(javaProxy, methodID, jArguments);
 
 
-	args.GetReturnValue().Set(v8::Undefined(isolate));
+
+	proxy->unreferenceJavaObject(javaProxy);
+
+
+
+				env->DeleteLocalRef(jArguments[0].l);
+
+
+	if (env->ExceptionCheck()) {
+		Local<Value> jsException = titanium::JSException::fromJavaException(isolate);
+		env->ExceptionClear();
+		return;
+	}
+
+	if (jResult == NULL) {
+		args.GetReturnValue().Set(Null(isolate));
+		return;
+	}
+
+	Local<Value> v8Result = titanium::TypeConverter::javaObjectToJsValue(isolate, env, jResult);
+
+	env->DeleteLocalRef(jResult);
+
+
+	args.GetReturnValue().Set(v8Result);
 
 }
 
 // Dynamic property accessors -------------------------------------------------
-
-void ListaudioProxy::getter_message(Local<Name> property, const PropertyCallbackInfo<Value>& args)
-{
-	Isolate* isolate = args.GetIsolate();
-	HandleScope scope(isolate);
-
-	JNIEnv *env = titanium::JNIScope::getEnv();
-	if (!env) {
-		titanium::JSException::GetJNIEnvironmentError(isolate);
-		return;
-	}
-
-	Local<Context> context = isolate->GetCurrentContext();
-	static jmethodID methodID = NULL;
-	if (!methodID) {
-		methodID = env->GetMethodID(ListaudioProxy::javaClass, "getMessage", "()Ljava/lang/String;");
-		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'getMessage' with signature '()Ljava/lang/String;'";
-			LOGE(TAG, error);
-				titanium::JSException::Error(isolate, error);
-				return;
-		}
-	}
-
-	Local<Object> holder = args.Holder();
-	if (!JavaObject::isJavaObject(holder)) {
-		holder = holder->FindInstanceInPrototypeChain(getProxyTemplate(isolate));
-	}
-	if (holder.IsEmpty() || holder->IsNull()) {
-		LOGE(TAG, "Couldn't obtain argument holder");
-		args.GetReturnValue().Set(v8::Undefined(isolate));
-		return;
-	}
-	titanium::Proxy* proxy = NativeObject::Unwrap<titanium::Proxy>(holder);
-	if (!proxy) {
-		args.GetReturnValue().Set(Undefined(isolate));
-		return;
-	}
-
-	jvalue* jArguments = 0;
-
-	jobject javaProxy = proxy->getJavaObject();
-	if (javaProxy == NULL) {
-		args.GetReturnValue().Set(v8::Undefined(isolate));
-		return;
-	}
-	jstring jResult = (jstring)env->CallObjectMethodA(javaProxy, methodID, jArguments);
-
-
-
-	proxy->unreferenceJavaObject(javaProxy);
-
-
-
-	if (env->ExceptionCheck()) {
-		Local<Value> jsException = titanium::JSException::fromJavaException(isolate);
-		env->ExceptionClear();
-		return;
-	}
-
-	if (jResult == NULL) {
-		args.GetReturnValue().Set(Null(isolate));
-		return;
-	}
-
-	Local<Value> v8Result = titanium::TypeConverter::javaStringToJsString(isolate, env, jResult);
-
-	env->DeleteLocalRef(jResult);
-
-
-	args.GetReturnValue().Set(v8Result);
-
-}
-
-void ListaudioProxy::setter_message(Local<Name> property, Local<Value> value, const PropertyCallbackInfo<void>& args)
-{
-	Isolate* isolate = args.GetIsolate();
-	HandleScope scope(isolate);
-
-	JNIEnv *env = titanium::JNIScope::getEnv();
-	if (!env) {
-		LOGE(TAG, "Failed to get environment, message wasn't set");
-		return;
-	}
-
-	Local<Context> context = isolate->GetCurrentContext();
-
-	static jmethodID methodID = NULL;
-	if (!methodID) {
-		methodID = env->GetMethodID(ListaudioProxy::javaClass, "setMessage", "(Ljava/lang/String;)V");
-		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'setMessage' with signature '(Ljava/lang/String;)V'";
-			LOGE(TAG, error);
-		}
-	}
-
-	Local<Object> holder = args.Holder();
-	if (!JavaObject::isJavaObject(holder)) {
-		holder = holder->FindInstanceInPrototypeChain(getProxyTemplate(isolate));
-	}
-	if (holder.IsEmpty() || holder->IsNull()) {
-		LOGE(TAG, "Couldn't obtain argument holder");
-		args.GetReturnValue().Set(v8::Undefined(isolate));
-		return;
-	}
-	titanium::Proxy* proxy = NativeObject::Unwrap<titanium::Proxy>(holder);
-	if (!proxy) {
-		return;
-	}
-
-	jvalue jArguments[1];
-
-	
-	if (!value->IsNull()) {
-		Local<Value> arg_0 = value;
-		jArguments[0].l =
-			titanium::TypeConverter::jsValueToJavaString(
-				isolate,
-				env, arg_0);
-	} else {
-		jArguments[0].l = NULL;
-	}
-
-	jobject javaProxy = proxy->getJavaObject();
-	if (javaProxy == NULL) {
-		return;
-	}
-	env->CallVoidMethodA(javaProxy, methodID, jArguments);
-
-	proxy->unreferenceJavaObject(javaProxy);
-
-
-
-				env->DeleteLocalRef(jArguments[0].l);
-
-
-	if (env->ExceptionCheck()) {
-		titanium::JSException::fromJavaException(isolate);
-		env->ExceptionClear();
-	}
-
-
-
-
-}
-
 
 
 	} // namespace aod

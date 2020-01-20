@@ -24,7 +24,7 @@ function moduleBootstrap(moduleBinding) {
 		invocationAPIs.push({ namespace: namespace, api: api });
 	}
 
-	addInvocationAPI(module, "Aod", "Aod", "createListaudio");addInvocationAPI(module, "Aod", "Aod", "createListbroadcasts");addInvocationAPI(module, "Aod", "Aod", "createPreviewdata");
+	addInvocationAPI(module, "Aod", "Aod", "createListaudio");addInvocationAPI(module, "Aod", "Aod", "createListbroadcasts");addInvocationAPI(module, "Aod", "Aod", "createLivedata");
 		if (!("__propertiesDefined__" in module)) {Object.defineProperties(module, {
 "Listbroadcasts": {
 get: function() {
@@ -33,17 +33,17 @@ return Listbroadcasts;
 },
 configurable: true
 },
+"Livedata": {
+get: function() {
+var Livedata =  lazyGet(this, "ti.aod.LivedataProxy", "Livedata", "Livedata");
+return Livedata;
+},
+configurable: true
+},
 "Listaudio": {
 get: function() {
 var Listaudio =  lazyGet(this, "ti.aod.ListaudioProxy", "Listaudio", "Listaudio");
 return Listaudio;
-},
-configurable: true
-},
-"Previewdata": {
-get: function() {
-var Previewdata =  lazyGet(this, "ti.aod.PreviewdataProxy", "Previewdata", "Previewdata");
-return Previewdata;
 },
 configurable: true
 },
@@ -55,8 +55,8 @@ return new module["Listaudio"](arguments);
 module.constructor.prototype.createListbroadcasts = function() {
 return new module["Listbroadcasts"](arguments);
 }
-module.constructor.prototype.createPreviewdata = function() {
-return new module["Previewdata"](arguments);
+module.constructor.prototype.createLivedata = function() {
+return new module["Livedata"](arguments);
 }
 }
 module.__propertiesDefined__ = true;

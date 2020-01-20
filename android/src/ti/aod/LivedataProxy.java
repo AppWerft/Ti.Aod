@@ -21,13 +21,21 @@ import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import android.os.AsyncTask;
 import android.os.Handler;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-@Kroll.proxy(creatableInModule = AodModule.class, propertyAccessors = { "onLoad"})
+@Kroll.proxy(creatableInModule = AodModule.class, propertyAccessors = { "onLoad" })
 public class LivedataProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = AodModule.LCAT + "Preview";
@@ -38,7 +46,11 @@ public class LivedataProxy extends KrollProxy {
 	private Timer timer;
 	KrollFunction onError;
 	KrollFunction onLoad;
-	Document doc;
+	KrollDict broadcastFromAod = new KrollDict();
+	KrollDict broadcastFromScheduler = new KrollDict();
+	KrollDict broadcastFromJSON = new KrollDict();
+
+	// Document doc;
 
 	private String url = "http://srv.deutschlandradio.de/aodpreviewdata.1915.de.rpc?drbm:station_id=";
 
@@ -47,7 +59,7 @@ public class LivedataProxy extends KrollProxy {
 		super();
 	}
 
-	private KrollDict getCurrentbroadcast() {
+	private KrollDict getCurrentbroadcastFromScheduler() {
 		if (AodModule.dailyScheduler.containsKey(new Integer(station))) {
 			Dailyscheduler scheduler = AodModule.dailyScheduler.get(new Integer(station));
 			if (scheduler != null) {
@@ -65,50 +77,75 @@ public class LivedataProxy extends KrollProxy {
 		return new KrollDict();
 	}
 
-	private final class PreviewdataRequestHandler extends AsyncTask<Void, Void, KrollDict> {
+	private final class LivedataRequestHandler extends AsyncTask<Void, Void, Document> {
 		@Override
-		protected KrollDict doInBackground(Void[] arg0) {
-			// getting static data from module
-			Log.d(LCAT, "doInBackground");
-			KrollDict resultDict = getCurrentbroadcast();
-			Log.d(LCAT, resultDict.toString());
+		protected Document doInBackground(Void[] arg0) {
+
 			try {
 				Log.d(LCAT, "Jsoup.connect " + url + station);
-				doc = Jsoup.connect(url + station).ignoreContentType(false).get();
+				return Jsoup.connect(url + station).ignoreContentType(false).get();
 			} catch (IOException e) {
 				e.printStackTrace();
 				if (onError != null) {
-					resultDict.put("error", e.getLocalizedMessage());
-					onError.call(getKrollObject(), resultDict);
+
 				}
 			}
-			return resultDict;
+			return null;
 		}
 
-		protected void onPostExecute(KrollDict resultDict) {
+		protected void onPostExecute(Document doc) {
 
 			String text = doc.select("text").get(0).text();
 			String name = doc.select("name").get(0).text();
 			if (text.startsWith(name)) {
 				text = text.substring(name.length());
 			}
-			if (!resultDict.containsKey("title"))
-				resultDict.put("title", name);
-			if (!resultDict.containsKey("start"))
-				resultDict.put("start", doc.select("time_start").get(0).text().substring(0,5));
-			resultDict.put("name", name);
-			resultDict.put("text", text);
-			resultDict.put("href_text", doc.select("href_text").get(0).text());
-			resultDict.put("href", doc.select("href").get(0).text());
-			if (onLoad != null)
-				onLoad.callAsync(getKrollObject(), resultDict);
-			if (hasProperty("onLoad")) {
-				((KrollFunction) getProperty("onLoad")).callAsync(getKrollObject(), resultDict);
 
-			}
+			if (!broadcastFromAod.containsKey("title"))
+				broadcastFromAod.put("title", name);
+			if (!broadcastFromAod.containsKey("start"))
+				broadcastFromAod.put("start", doc.select("time_start").get(0).text().substring(0, 5));
+			broadcastFromAod.put("name", name);
+			broadcastFromAod.put("text", text);
+			broadcastFromAod.put("href_text", doc.select("href_text").get(0).text());
+			broadcastFromAod.put("href", doc.select("href").get(0).text());
 
 		}
 	}
+
+	public void getNovaLivePlaylistItem() {
+		String URL = "https://www.deutschlandfunknova.de/actions/dradio/playlist/onair";
+		OkHttpClient client = new OkHttpClient();
+		Request request = new Request.Builder().url(URL).header("Authorization", "mein geheimer Schlüssel").build();
+
+		client.newCall(request).enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				e.printStackTrace();
+			}
+
+			@Override
+			public void onResponse(Call call, final Response response) throws IOException {
+				if (!response.isSuccessful()) {
+					throw new IOException("Unexpected code " + response);
+				} else {
+					String jsonData = response.body().string();
+					try {
+						JSONObject payload = new JSONObject(jsonData);
+						KrollDict playlistItem = new KrollDict(payload.getJSONObject("playlistItem"));
+						KrollDict presenter = new KrollDict(payload.getJSONObject("presenter"));
+						KrollDict show = new KrollDict(payload.getJSONObject("show"));
+						broadcastFromJSON.put("playlistItem", new KrollDict(playlistItem));
+						broadcastFromJSON.put("presenter", new KrollDict(presenter));
+						broadcastFromJSON.put("show", new KrollDict(show));
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+	};
 
 	// Handle creation options
 	@Override
@@ -120,16 +157,45 @@ public class LivedataProxy extends KrollProxy {
 		}
 	}
 
-	@Kroll.method	
+	private void sendBack() {
+		KrollDict res = new KrollDict();
+		long startTime=0;
+		long stopTime =0;
+		if (station == AodModule.STATION_NOVA) {
+			res = broadcastFromJSON;
+			startTime = Long.valueOf(res.getKrollDict("playlistitem").getInt("starttime"));
+			stopTime = Long.valueOf(res.getKrollDict("playlistitem").getInt("stoptime"));
+			
+			res.put("starttime", startTime);
+			res.put("endtime", startTime);
+					
+		} else {
+			res = getCurrentbroadcastFromScheduler();
+			res.put("title", broadcastFromAod.getString("title"));
+			res.put("name", broadcastFromAod.getString("name"));
+			res.put("text", broadcastFromAod.getString("text"));
+		}
+		long duration = stopTime -startTime;
+		long now = System.currentTimeMillis();
+		float progress = (now-startTime)/duration;
+		res.put("duration", duration);
+		res.put("progress", progress);
+		
+		if (onLoad != null)
+			onLoad.callAsync(getKrollObject(), res);
+		if (hasProperty("onLoad")) {
+			((KrollFunction) getProperty("onLoad")).callAsync(getKrollObject(), res);
+
+		}
+	}
+
+	@Kroll.method
 	public void setStation(int station) {
 		this.station = new Integer(station);
 		timer.cancel();
 		startTimer();
 	}
 
-	
-	
-	
 	@Kroll.method
 	public void start(KrollDict opts) {
 		if (opts.containsKey("interval")) {
@@ -140,6 +206,7 @@ public class LivedataProxy extends KrollProxy {
 		}
 		startTimer();
 	}
+
 	private void startTimer() {
 		final Handler handler = new Handler();
 		timer = new Timer();
@@ -150,19 +217,23 @@ public class LivedataProxy extends KrollProxy {
 					public void run() {
 						try {
 							if (AodModule.isNetworkAvailable()) {
-							new PreviewdataRequestHandler().execute();
+								new LivedataRequestHandler().execute();
+								if (station == AodModule.STATION_NOVA) {
+									getNovaLivePlaylistItem();
+								}
 							}
-							} catch (Exception e) {
+						} catch (Exception e) {
 							Log.e(LCAT, e.getLocalizedMessage());
 						}
 					}
 				});
 			}
 		};
-		timer.schedule(doAsynchronousTask, 0, interval); // execute in every 
+		timer.schedule(doAsynchronousTask, 0, interval); // execute in every
 
 		Log.d(LCAT, "timer with interval " + interval + " started");
 	}
+
 	@Kroll.method
 	public void stop() {
 		timer.cancel();

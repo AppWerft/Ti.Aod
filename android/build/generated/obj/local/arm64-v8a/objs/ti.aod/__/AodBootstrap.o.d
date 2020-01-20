@@ -61,8 +61,8 @@
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/JavaObject.h \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/EventEmitter.h \
  /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/NativeObject.h \
- jni/ti.aod.AodModule.h jni/ti.aod.ListaudioProxy.h \
- jni/ti.aod.PreviewdataProxy.h
+ jni/ti.aod.LivedataProxy.h jni/ti.aod.AodModule.h \
+ jni/ti.aod.ListaudioProxy.h
 
 /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/v8.h:
 
@@ -188,8 +188,8 @@ jni/ti.aod.ListbroadcastsProxy.h:
 
 /Users/fuerst/Library/Application\ Support/Titanium/mobilesdk/osx/8.2.0.GA/android/native/include/NativeObject.h:
 
+jni/ti.aod.LivedataProxy.h:
+
 jni/ti.aod.AodModule.h:
 
 jni/ti.aod.ListaudioProxy.h:
-
-jni/ti.aod.PreviewdataProxy.h:

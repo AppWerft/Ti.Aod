@@ -100,13 +100,13 @@ public class Dailyscheduler {
 			Log.d(LCAT, "items added to broadcastlist");
 			/* calculating the ends: */
 			for (int i = 0; i < broadcastList.size(); i++) {
-				Broadcast item = broadcastList.get(i);
+				Broadcast broadcast = broadcastList.get(i);
 				if (i < broadcastList.size() - 1) {
-					item.setEnd(broadcastList.get(i + 1).getStart());
+					broadcast.setStopText(broadcastList.get(i + 1).getStartText());
 				} else {
-					item.setEnd("24:00");
+					broadcast.setStopText("24:00");
 				}
-				broadcastList.set(i, item);
+				broadcastList.set(i, broadcast);
 
 			}
 			/*

@@ -15,10 +15,10 @@ namespace ti {
 namespace aod {
 	namespace aod {
 
-class PreviewdataProxy : public titanium::Proxy
+class LivedataProxy : public titanium::Proxy
 {
 public:
-	explicit PreviewdataProxy();
+	explicit LivedataProxy();
 
 	static void bindProxy(v8::Local<v8::Object>, v8::Local<v8::Context>);
 	static v8::Local<v8::FunctionTemplate> getProxyTemplate(v8::Isolate*);
