@@ -114,7 +114,7 @@ public class LivedataProxy extends KrollProxy {
 	}
 
 	public void getNovaLivePlaylistItem() {
-		String URL = "https://www.deutschlandfunknova.de/actions/dradio/playlist/onair";
+		String URL = "https://static.deutschlandfunknova.de/actions/dradio/playlist/onair";
 		OkHttpClient client = new OkHttpClient();
 		Request request = new Request.Builder().url(URL).header("Authorization", "mein geheimer Schlüssel").build();
 
